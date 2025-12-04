@@ -3,7 +3,7 @@
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useState, useEffect } from "react";
-import { AuthDemoPage } from "@/components/AuthPage";
+import { AuthPage } from "@/components/AuthPage";
 
 type EmailPasswordDemoProps = {
   user: User | null;
@@ -67,14 +67,8 @@ export default function EmailPasswordDemo({ user }: EmailPasswordDemoProps) {
   }
 
   return (
-    <AuthDemoPage
-      title="Email + Password"
-      intro="Classic credentials—users enter details, Supabase secures the rest while getSession + onAuthStateChange keep the UI live."
-      steps={[
-        "Toggle between sign up and sign in.",
-        "Submit to watch the session card refresh instantly.",
-        "Sign out to reset the listener.",
-      ]}
+    <AuthPage
+      title="Greate Experience"
     >
       {!currentUser && (
         <>
@@ -199,7 +193,7 @@ export default function EmailPasswordDemo({ user }: EmailPasswordDemoProps) {
               </div>
             </dl>
             <button
-              className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/20"
+             className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/20"
               onClick={handleSignOut}
             >
               Sign out
@@ -211,6 +205,6 @@ export default function EmailPasswordDemo({ user }: EmailPasswordDemoProps) {
           </div>
         )}
       </section>
-    </AuthDemoPage>
+    </AuthPage>
   );
 }
