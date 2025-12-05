@@ -1,23 +1,17 @@
-import { PrismaClient } from "@prisma/client";
-import jwt from "jsonwebtoken";
+import { prisma } from "@/lib/prisma";
+import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
-const prisma = new PrismaClient();
+// Bookmarks API routes
 
-function getUserFromToken(req: NextRequest) {
-  const token = req.headers.get("authorization")?.split(" ")[1];
-  if (!token) return null;
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: number };
-    return decoded.id;
-  } catch {
-    return null;
-  }
+async function getUserId(): Promise<string | null> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  return user?.id || null;
 }
 
-
 export async function POST(req: NextRequest) {
-  const userId = getUserFromToken(req);
+  const userId = await getUserId();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -25,6 +19,7 @@ export async function POST(req: NextRequest) {
   try {
     const { url, title, description, collectionId, tags } = await req.json();
 
+    // Create bookmark with user ID (string UUID from Supabase)
     const bookmark = await prisma.bookmark.create({
       data: {
         url,
@@ -38,13 +33,13 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(bookmark, { status: 201 });
   } catch (error) {
+    console.error('Bookmark creation error:', error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
 
-
-export async function GET(req: NextRequest) {
-  const userId = getUserFromToken(req);
+export async function GET() {
+  const userId = await getUserId();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -52,10 +47,12 @@ export async function GET(req: NextRequest) {
   try {
     const bookmarks = await prisma.bookmark.findMany({
       where: { userId },
+      orderBy: { createdAt: 'desc' },
     });
 
     return NextResponse.json(bookmarks, { status: 200 });
   } catch (error) {
+    console.error('Bookmark fetch error:', error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

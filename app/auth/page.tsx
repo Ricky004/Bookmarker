@@ -5,13 +5,13 @@ import { User } from "@supabase/supabase-js";
 import { useState, useEffect } from "react";
 import { AuthPage } from "@/components/AuthPage";
 
-type EmailPasswordDemoProps = {
+type AuthFormProps = {
   user: User | null;
 };
 
 type Mode = "signup" | "signin"
 
-export default function EmailPasswordDemo({ user }: EmailPasswordDemoProps) {
+export default function AuthForm({ user }: AuthFormProps) {
   const [mode, setMode] = useState("signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -44,9 +44,6 @@ export default function EmailPasswordDemo({ user }: EmailPasswordDemoProps) {
       const { error, data } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/welcome`,
-        }
       });
       if (error) {
         setStatus(error.message);
