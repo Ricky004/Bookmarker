@@ -1,11 +1,23 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
-export async function apiCall(
+interface BookmarkData {
+  url: string;
+  title: string;
+  description?: string;
+  tags?: string[];
+  collectionId?: string;
+}
+
+interface CollectionData {
+  name: string;
+}
+
+export async function apiCall<T = unknown>(
   endpoint: string,
   method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
-  body?: any,
+  body?: unknown,
   token?: string
-) {
+): Promise<T> {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
@@ -30,18 +42,32 @@ export async function apiCall(
 
 export const bookmarkAPI = {
   // Create bookmark
-  create: (data: any, token: string) =>
+  create: (data: BookmarkData, token?: string) =>
     apiCall("/bookmarks", "POST", data, token),
 
   // Get all bookmarks
-  getAll: (token: string) =>
+  getAll: (token?: string) =>
     apiCall("/bookmarks", "GET", undefined, token),
 
+  // Get bookmarks by collection
+  getByCollection: (collectionId: string, token?: string) =>
+    apiCall(`/collections/${collectionId}/bookmarks`, "GET", undefined, token),
+
   // Update bookmark
-  update: (id: number, data: any, token: string) =>
-    apiCall(`/bookmarks/${id}`, "PUT", data, token),
+  update: (collectionId: string, bookmarkId: string, data: BookmarkData, token?: string) =>
+    apiCall(`/collections/${collectionId}/bookmarks/${bookmarkId}`, "PUT", data, token),
 
   // Delete bookmark
-  delete: (id: number, token: string) =>
-    apiCall(`/bookmarks/${id}`, "DELETE", undefined, token),
+  delete: (collectionId: string, bookmarkId: string, token?: string) =>
+    apiCall(`/collections/${collectionId}/bookmarks/${bookmarkId}`, "DELETE", undefined, token),
+};
+
+export const collectionAPI = {
+  // Create collection
+  create: (data: CollectionData, token?: string) =>
+    apiCall("/collections", "POST", data, token),
+
+  // Get all collections
+  getAll: (token?: string) =>
+    apiCall("/collections", "GET", undefined, token),
 };

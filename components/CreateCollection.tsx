@@ -14,17 +14,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react";
 
-interface CreateBookmarkProps {
-    collectionId?: string;
-    defaultCollectionId?: string;
-}
-
-export function CreateBookmark({ collectionId, defaultCollectionId }: CreateBookmarkProps) {
+export function CreateBookmark() {
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [url, setUrl] = useState("")
-    const [title, setTitle] = useState("")
-    const [description, setDescription] = useState("")
+    const [name, setName] = useState("")
     const [error, setError] = useState("")
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -33,40 +26,30 @@ export function CreateBookmark({ collectionId, defaultCollectionId }: CreateBook
         setError("")
 
         try {
-            const targetCollectionId = collectionId || defaultCollectionId;
-            const apiUrl = targetCollectionId 
-                ? `/api/collections/${targetCollectionId}/bookmarks`
-                : '/api/bookmarks';
-            
-            const response = await fetch(apiUrl, {
+            const response = await fetch('/api/collections', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    url,
-                    title,
-                    description,
-                    tags: [],
+                    name,
                 }),
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Failed to create bookmark');
+                throw new Error(data.error || 'Failed to create collection');
             }
 
             // Reset form and close dialog
-            setUrl("");
-            setTitle("");
-            setDescription("");
+            setName("");
             setOpen(false);
             
             // Refresh the page to show new bookmark
             window.location.reload();
         } catch (err) {
-           setError(err instanceof Error ? err.message : "Failed to create bookmark")
+           setError(err instanceof Error ? err.message : "Failed to create collection")
         } finally {
            setLoading(false)
         }
@@ -75,14 +58,14 @@ export function CreateBookmark({ collectionId, defaultCollectionId }: CreateBook
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline">Create Bookmark</Button>
+                <Button variant="outline">Open Dialog</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <form onSubmit={handleSubmit}>
                     <DialogHeader>
-                        <DialogTitle>Create New Bookmark</DialogTitle>
+                        <DialogTitle>Create New Collection</DialogTitle>
                         <DialogDescription>
-                            Save a new bookmark to your collection. Add a URL, title, and description to organize your saved links.
+                            Save a new Collection.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
@@ -92,35 +75,14 @@ export function CreateBookmark({ collectionId, defaultCollectionId }: CreateBook
                             </div>
                         )}
                         <div className="grid gap-3">
-                            <Label htmlFor="url">URL</Label>
+                            <Label htmlFor="name">Name</Label>
                             <Input 
-                                id="url" 
-                                name="url" 
-                                placeholder="https://www.google.com" 
-                                value={url} 
-                                onChange={(e) => setUrl(e.target.value)}
+                                id="name" 
+                                name="name" 
+                                placeholder="System design" 
+                                value={name} 
+                                onChange={(e) => setName(e.target.value)}
                                 required 
-                            />
-                        </div>
-                        <div className="grid gap-3">
-                            <Label htmlFor="title">Title</Label>
-                            <Input 
-                                id="title" 
-                                name="title" 
-                                placeholder="Google article" 
-                                value={title} 
-                                onChange={(e) => setTitle(e.target.value)}
-                                required 
-                            />
-                        </div>
-                        <div className="grid gap-3">
-                            <Label htmlFor="description">Description</Label>
-                            <Input 
-                                id="description" 
-                                name="description" 
-                                placeholder="Brief article about AI agents" 
-                                value={description} 
-                                onChange={(e) => setDescription(e.target.value)} 
                             />
                         </div>
                     </div>
