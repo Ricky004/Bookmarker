@@ -1,5 +1,3 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-
 interface BookmarkData {
   url: string;
   title: string;
@@ -26,7 +24,8 @@ export async function apiCall<T = unknown>(
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE}/api${endpoint}`, {
+  // Use relative URLs so it works on any domain (localhost or production)
+  const response = await fetch(`/api${endpoint}`, {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
