@@ -2,9 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { SearchForm } from "@/components/search-form"
-import { VersionSwitcher } from "@/components/version-switcher"
-import { CreateBookmark } from "@/components/CreateCollection"
+import { CreateCollection } from "@/components/CreateCollection"
 import {
   Sidebar,
   SidebarContent,
@@ -20,17 +18,28 @@ import {
 import { useCallback, useEffect, useState } from "react"
 import { getSupabaseBrowserClient } from "@/lib/supabase/client"
 import { collectionAPI } from "@/lib/api"
+import { Bookmark } from "lucide-react"
 
 interface Collection {
   id: string;
   name: string;
   userId: string;
   createdAt: string;
+  _count?: {
+    bookmarks: number;
+  };
 }
 
-const data = {
-  versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
-}
+const collectionColors = [
+  'from-purple-500 to-purple-600',
+  'from-orange-500 to-orange-600',
+  'from-cyan-500 to-cyan-600',
+  'from-blue-500 to-blue-600',
+  'from-gray-400 to-gray-500',
+  'from-pink-500 to-pink-600',
+  'from-green-500 to-green-600',
+  'from-yellow-500 to-yellow-600',
+];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [collections, setCollections] = useState<Collection[]>([]);
@@ -62,21 +71,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <VersionSwitcher
-          versions={data.versions}
-          defaultVersion={data.versions[0]}
-        />
-        <SearchForm />
-        <CreateBookmark />
+        <div className="flex items-center gap-2 font-bold text-emerald-400 text-xl mb-4 ml-1">
+          <Bookmark className="w-6 h-6" />
+          <span>BookMarker</span>
+        </div>
+        <CreateCollection />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-slate-400">Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/">
+                  <Link href="/" className="text-slate-200 hover:text-white">
                     Home
                   </Link>
                 </SidebarMenuButton>
@@ -85,23 +93,44 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupContent>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>Collections</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-slate-400">Collections</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {loading ? (
-                <div className="px-2 py-1 text-sm text-gray-500">Loading...</div>
+                <div className="px-2 py-1 text-sm text-slate-400">Loading...</div>
               ) : collections.length === 0 ? (
-                <div className="px-2 py-1 text-sm text-gray-500">No collections yet</div>
+                <div className="px-2 py-1 text-sm text-slate-400">No collections yet</div>
               ) : (
-                collections.map((collection) => (
-                  <SidebarMenuItem key={collection.id}>
-                    <SidebarMenuButton asChild>
-                      <Link href={`/collections/${collection.id}`}>
-                        {collection.name}
+                collections.map((collection, index) => {
+                  const colorClass = collectionColors[index % collectionColors.length];
+                  const bookmarkCount = collection._count?.bookmarks || 0;
+                  
+                  return (
+                    <SidebarMenuItem key={collection.id}>
+                      <Link 
+                        href={`/collections/${collection.id}`}
+                        className="flex items-center gap-3 px-2 py-2.5 rounded-lg text-slate-200 hover:bg-white/10 hover:text-white transition-colors group"
+                      >
+                        {/* Icon */}
+                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${colorClass} flex items-center justify-center flex-shrink-0`}>
+                          <span className="text-white font-bold text-sm">
+                            {collection.name.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        
+                        {/* Name */}
+                        <span className="flex-1 text-sm font-medium truncate">
+                          {collection.name}
+                        </span>
+                        
+                        {/* Count Badge */}
+                        <span className="px-2 py-0.5 text-xs rounded-md bg-slate-700/50 text-slate-300 group-hover:bg-slate-600/50">
+                          {bookmarkCount}
+                        </span>
                       </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))
+                    </SidebarMenuItem>
+                  );
+                })
               )}
             </SidebarMenu>
           </SidebarGroupContent>

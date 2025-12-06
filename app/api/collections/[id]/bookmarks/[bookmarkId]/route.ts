@@ -23,7 +23,7 @@ export async function PUT(
 
     // Verify bookmark belongs to user
     const existing = await prisma.bookmark.findFirst({
-      where: { id: parseInt(bookmarkId), userId },
+      where: { id: bookmarkId, userId },
     });
 
     if (!existing) {
@@ -32,7 +32,7 @@ export async function PUT(
 
     // Update bookmark
     const bookmark = await prisma.bookmark.update({
-      where: { id: parseInt(bookmarkId) },
+      where: { id: bookmarkId },
       data: {
         url,
         title,
@@ -63,7 +63,7 @@ export async function DELETE(
 
     // Verify bookmark belongs to user before deleting
     const existing = await prisma.bookmark.findFirst({
-      where: { id: parseInt(bookmarkId), userId },
+      where: { id: bookmarkId, userId },
     });
 
     if (!existing) {
@@ -71,7 +71,7 @@ export async function DELETE(
     }
 
     await prisma.bookmark.delete({
-      where: { id: parseInt(bookmarkId) },
+      where: { id: bookmarkId },
     });
 
     return NextResponse.json({ message: "Bookmark deleted" }, { status: 200 });

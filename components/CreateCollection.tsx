@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react";
 
-export function CreateBookmark() {
+export function CreateCollection() {
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
     const [name, setName] = useState("")
@@ -58,7 +58,7 @@ export function CreateBookmark() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline">Open Dialog</Button>
+                <Button className="w-full border border-emerald-400/50 bg-transparent text-emerald-400 hover:bg-emerald-400/10 hover:text-emerald-300 hover:border-emerald-400">Create Collection</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <form onSubmit={handleSubmit}>

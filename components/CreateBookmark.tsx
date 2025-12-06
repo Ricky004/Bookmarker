@@ -75,7 +75,7 @@ export function CreateBookmark({ collectionId, defaultCollectionId }: CreateBook
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline">Create Bookmark</Button>
+                <Button className="border border-emerald-400/50 bg-transparent text-emerald-400 hover:bg-emerald-400/10 hover:text-emerald-300 hover:border-emerald-400">Create Bookmark</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <form onSubmit={handleSubmit}>

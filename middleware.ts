@@ -31,12 +31,20 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const { data } = await supabase.auth.getClaims()
-  const user = data?.claims
+  const { data } = await supabase.auth.getSession()
+  const session = data?.session
 
-  // Protect routes
-  if (request.nextUrl.pathname.startsWith('/protected') && !user) {
-    return NextResponse.redirect(new URL('/login', request.url))
+  // Public routes that don't require authentication
+  const isAuthPage = request.nextUrl.pathname.startsWith('/auth')
+  
+  // If user is not authenticated and trying to access protected routes
+  if (!session && !isAuthPage) {
+    return NextResponse.redirect(new URL('/auth', request.url))
+  }
+
+  // If user is authenticated and trying to access auth page, redirect to home
+  if (session && isAuthPage) {
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
   return response

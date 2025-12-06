@@ -77,12 +77,12 @@ export default function BookmarksList() {
             <div key={bookmark.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
               {/* Checkbox */}
               <div className="flex items-center">
-                <input type="checkbox" className="w-5 h-5 rounded border-gray-300" />
+                <input type="checkbox" className="w-5 h-5 rounded-full border-gray-300" disabled />
               </div>
               
               {/* Icon/Logo */}
               <div className="shrink-0">
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl">
+                <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl">
                   {bookmark.title.charAt(0).toUpperCase()}
                 </div>
               </div>
@@ -117,7 +117,7 @@ export default function BookmarksList() {
                   className="p-2 hover:bg-red-100 rounded-lg transition-colors" 
                   title="Delete"
                 >
-                  <Trash2 />
+                  <Trash2 className=" text-gray-500"/>
                 </button>
                 <button className="p-2 hover:bg-gray-200 rounded-lg transition-colors" title="More">
                   <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -41,7 +41,11 @@ export async function GET() {
   try {
     const collection = await prisma.collection.findMany({
       where: { userId },
-      include: {bookmarks: true},
+      include: {
+        _count: {
+          select: { bookmarks: true }
+        }
+      },
       orderBy: { createdAt: 'desc' },
     });
 
