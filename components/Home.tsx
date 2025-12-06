@@ -2,7 +2,6 @@
 
 import { AppSidebar } from "./app-sidebar"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
-import { CreateBookmark } from "./CreateBookmark"
 import BookmarksList from "./BookmarksList"
 import { Header } from "./Header"
 
