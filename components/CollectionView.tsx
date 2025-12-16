@@ -8,6 +8,7 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { CreateBookmark } from "./CreateBookmark";
 import { Header } from "./Header";
 import { Separator } from "@/components/ui/separator";
+import { useBookmarkRefresh } from "@/lib/context/BookmarkContext";
 
 interface Bookmark {
   id: string;
@@ -32,6 +33,7 @@ export default function CollectionView({ collectionId }: { collectionId: string 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const supabase = getSupabaseBrowserClient();
+  const { refreshKey, triggerRefresh } = useBookmarkRefresh();
 
   const fetchCollectionData = useCallback(async () => {
     try {
@@ -62,7 +64,7 @@ export default function CollectionView({ collectionId }: { collectionId: string 
 
   useEffect(() => {
     fetchCollectionData();
-  }, [fetchCollectionData]);
+  }, [fetchCollectionData, refreshKey]);
 
   const handleDelete = async (bookmarkId: string) => {
     try {
@@ -71,6 +73,7 @@ export default function CollectionView({ collectionId }: { collectionId: string 
 
       await bookmarkAPI.delete(collectionId, bookmarkId);
       setBookmarks(bookmarks.filter((b) => b.id !== bookmarkId));
+      triggerRefresh();
     } catch (err) {
       alert("Failed to delete: " + (err instanceof Error ? err.message : "Unknown error"));
     }
@@ -92,7 +95,9 @@ export default function CollectionView({ collectionId }: { collectionId: string 
                 <h1 className="text-2xl font-bold">
                   {collection?.name || "Collection"}
                 </h1>
-                <CreateBookmark defaultCollectionId={collectionId} />
+                <CreateBookmark 
+                  defaultCollectionId={collectionId}
+                />
               </div>
               
               <Separator className="mb-6" />

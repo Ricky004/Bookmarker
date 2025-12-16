@@ -15,15 +15,15 @@ export default function Home() {
           <h1 className="text-2xl font-bold">Welcome to Bookmark Manager</h1>
           
           {/* Instructions Card */}
-          <div className="mt-6 p-6 bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-200 rounded-lg shadow-sm">
+          <div className="mt-6 p-6 bg-linear-to-r from-emerald-50 to-blue-50 border border-emerald-200 rounded-lg shadow-sm">
             <h2 className="text-lg font-semibold text-gray-800 mb-3">🚀 Getting Started</h2>
             <div className="space-y-2 text-gray-700">
               <div className="flex items-start gap-3">
-                <span className="flex-shrink-0 w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</span>
-                <p><span className="font-medium">Create a Collection:</span> Click the "New Collection&quot; button in the sidebar to organize your bookmarks</p>
+                <span className="shrink-0 w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</span>
+                <p><span className="font-medium">Create a Collection:</span> Click the &quot;New Collection&quot; button in the sidebar to organize your bookmarks</p>
               </div>
               <div className="flex items-start gap-3">
-                <span className="flex-shrink-0 w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</span>
+                <span className="shrink-0 w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</span>
                 <p><span className="font-medium">Add Bookmarks:</span> Click on any collection from the sidebar to open it and start adding bookmarks</p>
               </div>
             </div>

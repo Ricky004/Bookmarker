@@ -13,12 +13,14 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react";
+import { useBookmarkRefresh } from "@/lib/context/BookmarkContext";
 
 export function CreateCollection() {
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
     const [name, setName] = useState("")
     const [error, setError] = useState("")
+    const { triggerRefresh } = useBookmarkRefresh();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -46,8 +48,8 @@ export function CreateCollection() {
             setName("");
             setOpen(false);
             
-            // Refresh the page to show new bookmark
-            window.location.reload();
+            // Trigger refresh for sidebar
+            triggerRefresh();
         } catch (err) {
            setError(err instanceof Error ? err.message : "Failed to create collection")
         } finally {

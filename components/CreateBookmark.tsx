@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react";
+import { useBookmarkRefresh } from "@/lib/context/BookmarkContext";
 
 interface CreateBookmarkProps {
     collectionId?: string;
@@ -26,6 +27,7 @@ export function CreateBookmark({ collectionId, defaultCollectionId }: CreateBook
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
     const [error, setError] = useState("")
+    const { triggerRefresh } = useBookmarkRefresh();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -63,8 +65,9 @@ export function CreateBookmark({ collectionId, defaultCollectionId }: CreateBook
             setDescription("");
             setOpen(false);
             
-            // Refresh the page to show new bookmark
-            window.location.reload();
+            // Trigger refresh for sidebar and bookmarks list
+            triggerRefresh();
+
         } catch (err) {
            setError(err instanceof Error ? err.message : "Failed to create bookmark")
         } finally {

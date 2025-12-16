@@ -19,6 +19,7 @@ import { useCallback, useEffect, useState } from "react"
 import { getSupabaseBrowserClient } from "@/lib/supabase/client"
 import { collectionAPI } from "@/lib/api"
 import { Bookmark } from "lucide-react"
+import { useBookmarkRefresh } from "@/lib/context/BookmarkContext"
 
 interface Collection {
   id: string;
@@ -45,6 +46,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
   const supabase = getSupabaseBrowserClient();
+  const { refreshKey } = useBookmarkRefresh();
 
   const fetchCollections = useCallback(async () => {
     try {
@@ -67,7 +69,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   useEffect(() => {
     fetchCollections();
-  }, [fetchCollections]);
+  }, [fetchCollections, refreshKey]); // Add refreshKey as dependency
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -112,7 +115,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         className="flex items-center gap-3 px-2 py-2.5 rounded-lg text-slate-200 hover:bg-white/10 hover:text-white transition-colors group"
                       >
                         {/* Icon */}
-                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${colorClass} flex items-center justify-center flex-shrink-0`}>
+                        <div className={`w-10 h-10 rounded-lg bg-linear-to-br ${colorClass} flex items-center justify-center shrink-0`}>
                           <span className="text-white font-bold text-sm">
                             {collection.name.charAt(0).toUpperCase()}
                           </span>

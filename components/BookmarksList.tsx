@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { bookmarkAPI } from "@/lib/api";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Trash2 } from "lucide-react"
+import { useBookmarkRefresh } from "@/lib/context/BookmarkContext";
 
 interface Bookmark {
   id: string;
@@ -20,6 +21,7 @@ export default function BookmarksList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const supabase = getSupabaseBrowserClient();
+  const { refreshKey, triggerRefresh } = useBookmarkRefresh();
 
   const fetchBookmarks = useCallback(async () => {
     try {
@@ -43,10 +45,12 @@ export default function BookmarksList() {
 
   useEffect(() => {
     fetchBookmarks();
-  }, [fetchBookmarks]);
+  }, [fetchBookmarks, refreshKey]);
 
   const handleDelete = async (collectionId: string | null, bookmarkId: string) => {
     try {
+      setError("")
+
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
@@ -56,9 +60,13 @@ export default function BookmarksList() {
       }
 
       await bookmarkAPI.delete(collectionId, bookmarkId);
+
       setBookmarks(bookmarks.filter((b) => b.id !== bookmarkId));
+      
+      triggerRefresh();
+     
     } catch (err) {
-      alert("Failed to delete: " + (err instanceof Error ? err.message : "Unknown error"));
+      setError(err instanceof Error ? err.message : "Failed to delete bookmark")
     }
   };
 
@@ -117,11 +125,11 @@ export default function BookmarksList() {
                   className="p-2 hover:bg-red-100 rounded-lg transition-colors" 
                   title="Delete"
                 >
-                  <Trash2 className=" text-gray-500"/>
+                  <Trash2 className="text-gray-500"/>
                 </button>
                 <button className="p-2 hover:bg-gray-200 rounded-lg transition-colors" title="More">
                   <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                   </svg>
                 </button>
               </div>
