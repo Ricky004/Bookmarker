@@ -10,7 +10,7 @@ async function getUserId(): Promise<string | null> {
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const userId = await getUserId();
   if (!userId) {
@@ -19,7 +19,7 @@ export async function PUT(
 
   try {
     const { url, title, description, tags, collectionId } = await req.json();
-    const bookmarkId = params.id;
+    const { id: bookmarkId } = await params;
 
     // Verify bookmark exists and belongs to user
     const existingBookmark = await prisma.bookmark.findUnique({
@@ -51,7 +51,7 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const userId = await getUserId();
   if (!userId) {
@@ -59,7 +59,7 @@ export async function DELETE(
   }
 
   try {
-    const bookmarkId = params.id;
+    const { id: bookmarkId } = await params;
 
     // Verify bookmark exists and belongs to user
     const existingBookmark = await prisma.bookmark.findUnique({
