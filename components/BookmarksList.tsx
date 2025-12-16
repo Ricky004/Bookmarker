@@ -5,6 +5,7 @@ import { bookmarkAPI } from "@/lib/api";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Trash2 } from "lucide-react"
 import { useBookmarkRefresh } from "@/lib/context/BookmarkContext";
+import { EditBookmark } from "./EditBookmark";
 
 interface Bookmark {
   id: string;
@@ -20,13 +21,15 @@ export default function BookmarksList() {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const supabase = getSupabaseBrowserClient();
   const { refreshKey, triggerRefresh } = useBookmarkRefresh();
 
   const fetchBookmarks = useCallback(async () => {
     try {
       setLoading(true);
-      const { data: { session } } = await supabase.auth.getSession();
+      setError(""); // Clear any previous errors
+      
+      const supabaseClient = getSupabaseBrowserClient();
+      const { data: { session } } = await supabaseClient.auth.getSession();
       
       if (!session) {
         setError("Please login first");
@@ -35,13 +38,19 @@ export default function BookmarksList() {
       }
 
       const data = await bookmarkAPI.getAll();
+      
+      if (!data || !Array.isArray(data)) {
+        setError("Invalid data received from server");
+        return;
+      }
+      
       setBookmarks(data as Bookmark[]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch bookmarks");
     } finally {
       setLoading(false);
     }
-  }, [supabase]);
+  }, []); // Remove supabase dependency
 
   useEffect(() => {
     fetchBookmarks();
@@ -51,7 +60,8 @@ export default function BookmarksList() {
     try {
       setError("")
 
-      const { data: { session } } = await supabase.auth.getSession();
+      const supabaseClient = getSupabaseBrowserClient();
+      const { data: { session } } = await supabaseClient.auth.getSession();
       if (!session) return;
 
       if (!collectionId) {
@@ -115,11 +125,7 @@ export default function BookmarksList() {
               
               {/* Action Buttons */}
               <div className="flex items-center gap-2">
-                <button className="p-2 hover:bg-gray-200 rounded-lg transition-colors" title="Share">
-                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                  </svg>
-                </button>
+                <EditBookmark bookmark={bookmark} />
                 <button 
                   onClick={() => handleDelete(bookmark.collectionId, bookmark.id)}
                   className="p-2 hover:bg-red-100 rounded-lg transition-colors" 
