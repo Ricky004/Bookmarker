@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react";
+import { toast } from "sonner"
 import { useBookmarkRefresh } from "@/lib/context/BookmarkContext";
 
 interface CreateBookmarkProps {
@@ -65,6 +66,8 @@ export function CreateBookmark({ collectionId, defaultCollectionId }: CreateBook
             setDescription("");
             setOpen(false);
             
+            toast.success("Bookmark has been created");
+            
             // Trigger refresh for sidebar and bookmarks list
             triggerRefresh();
 
@@ -78,7 +81,11 @@ export function CreateBookmark({ collectionId, defaultCollectionId }: CreateBook
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="border border-emerald-400/50 bg-transparent text-emerald-400 hover:bg-emerald-400/10 hover:text-emerald-300 hover:border-emerald-400">Create Bookmark</Button>
+                <Button 
+                   className="border border-emerald-400/50 bg-transparent text-emerald-400 hover:bg-emerald-400/10 hover:text-emerald-300 hover:border-emerald-400"
+                >
+                   Create Bookmark
+                </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <form onSubmit={handleSubmit}>
@@ -136,7 +143,10 @@ export function CreateBookmark({ collectionId, defaultCollectionId }: CreateBook
                         >
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={loading}>
+                        <Button 
+                          type="submit"
+                          disabled={loading}
+                        >
                             {loading ? "Creating..." : "Create"}
                         </Button>
                     </DialogFooter>

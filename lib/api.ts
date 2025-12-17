@@ -69,4 +69,8 @@ export const collectionAPI = {
   // Get all collections
   getAll: (token?: string) =>
     apiCall("/collections", "GET", undefined, token),
+  
+  // Delete collection
+  delete: (collectionId: string, token?: string) =>
+    apiCall(`/collections/${collectionId}`, "DELETE", undefined, token)
 };
